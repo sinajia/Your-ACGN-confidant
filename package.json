@@ -1,0 +1,73 @@
+{
+  "name": "acgn-confidant",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "server": "node server | pino-colada",
+    "dev": "run-p server start"
+  },
+  "dependencies": {
+    "@langchain/community": "^0.2.1",
+    "@langchain/core": "^0.2.0",
+    "@langchain/openai": "^0.0.33",
+    "@langchain/qdrant": "^0.0.4",
+    "@qdrant/js-client-rest": "^1.9.0",
+    "axios": "^1.7.2",
+    "body-parser": "^1.20.2",
+    "bootstrap": "^5.3.3",
+    "date-fns": "^3.6.0",
+    "delay": "^6.0.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "langchain": "^0.2.0",
+    "lodash": "^4.17.21",
+    "microsoft-cognitiveservices-speech-sdk": "^1.36.0",
+    "npm-run-all": "^4.1.5",
+    "p-timeout": "^6.1.2",
+    "pino-colada": "^2.2.2",
+    "pino-http": "^10.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-scripts": "5.0.1",
+    "reactstrap": "^9.2.2",
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5",
+    "universal-cookie": "^7.1.4",
+    "web-vitals": "^4.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.5",
+    "@testing-library/react": "^15.0.7",
+    "@testing-library/user-event": "^14.5.2"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "overrides": {
+    "css-select": "^5.1.0"
+  },
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=8"
+  },
+  "proxy": "http://localhost:4321"
+}
