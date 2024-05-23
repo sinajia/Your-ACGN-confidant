@@ -1,5 +1,5 @@
 .main-container {
-    margin-top: 100px;
+    margin-top: 20px;
 }
 
 .fa-microphone {
@@ -36,7 +36,7 @@
 
 .output-display {
     background-color: #383b4b;
-    height: calc(100% - 100px);;
+    height: calc(100% - 20px);;
 }
 
 .fas, .fa {
