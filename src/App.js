@@ -195,6 +195,7 @@ export default function App() {
     const speechConfig = await genSpeechConfig();
     if (!_player) {
       _player = new speechsdk.SpeakerAudioDestination();
+      _player.onAudioStart = audioStart;
     }
     if (!_synthesizer) {
       const audioConfig = speechsdk.AudioConfig.fromSpeakerOutput(_player);
@@ -207,53 +208,55 @@ export default function App() {
       setRecognizer(recognizer);
       setDisplayText('speak into your microphone...');
       recognizer.startContinuousRecognitionAsync(result => {
-          console.log('result', result);
+        console.log('result', result);
+        _speechContext.langArr.push('我们来聊天吧!');
+        langArrToSpeech();
       }, err => {
         console.error('error', err);
       });
 
       recognizer.recognized = async (reco, e) => {
         try {
-            const res = e.result;
-            console.log(`recognized: ${res?.text}`);
-            setDisplayText(res?.text);
-            if (res?.text) {
-              for (const it of _conversationArr) {
-                _socket.emit('abort', { conversationId: it.conversationId });
-              }
-              _conversationArr = [];
-              _speechContext.langArr = [];
-
-              const conversationId = `${Date.now()}`;
-              _conversationArr.push({
-                conversationId,
-                index: 0,
-                langArr: [],
-              });
-              _socket.emit('message', { message: res.text, conversationId });
-
-              if (_synthesizer) {
-                _synthesizer.close();
-                _synthesizer = undefined;
-              }
-
-              if (_player) {
-                const player = _player;
-                _player = undefined;
-
-                player.pause();
-                player.close(async () => {
-                  updateVirtualPartner('jpg');
-                  const speechConfig = await genSpeechConfig();
-                  _player = new speechsdk.SpeakerAudioDestination();
-                  _player.onAudioStart = audioStart;
-                  const audioConfig = speechsdk.AudioConfig.fromSpeakerOutput(_player);
-                  _synthesizer = new speechsdk.SpeechSynthesizer(speechConfig, audioConfig);
-                }, err => {
-                  console.error(err);
-                });
-              }
+          const res = e.result;
+          console.log(`recognized: ${res?.text}`);
+          setDisplayText(res?.text);
+          if (res?.text) {
+            for (const it of _conversationArr) {
+              _socket.emit('abort', { conversationId: it.conversationId });
             }
+            _conversationArr = [];
+            _speechContext.langArr = [];
+
+            const conversationId = `${Date.now()}`;
+            _conversationArr.push({
+              conversationId,
+              index: 0,
+              langArr: [],
+            });
+            _socket.emit('message', { message: res.text, conversationId });
+
+            if (_synthesizer) {
+              _synthesizer.close();
+              _synthesizer = undefined;
+            }
+
+            if (_player) {
+              const player = _player;
+              _player = undefined;
+
+              player.pause();
+              player.close(async () => {
+                updateVirtualPartner('jpg');
+                const speechConfig = await genSpeechConfig();
+                _player = new speechsdk.SpeakerAudioDestination();
+                _player.onAudioStart = audioStart;
+                const audioConfig = speechsdk.AudioConfig.fromSpeakerOutput(_player);
+                _synthesizer = new speechsdk.SpeechSynthesizer(speechConfig, audioConfig);
+              }, err => {
+                console.error(err);
+              });
+            }
+          }
         } catch (err) {
           console.error(err);
         }
