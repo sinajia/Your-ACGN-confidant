@@ -1,6 +1,10 @@
 # Quickstart
 
+![](./public/demo.png)
+
 Chat in real time with virtual characters
+
+<video src="./public/demo.mp4" width="100" controls preload></video>
 
 ## Prepare environment
 
