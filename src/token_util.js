@@ -12,7 +12,7 @@ export async function getTokenOrRefresh() {
 
       cookie.set('speech-token', region + ':' + token, {maxAge: 540, path: '/'});
 
-      console.log(token, region);
+      console.log('Token fetched from back-end: ' + token);
 
       return { authToken: token, region };
     } catch (err) {
@@ -20,6 +20,7 @@ export async function getTokenOrRefresh() {
       return { authToken: null, error: err.response.data };
     }
   } else {
+    console.log('Token fetched from cookie: ' + speechToken);
     const idx = speechToken.indexOf(':');
     return { authToken: speechToken.slice(idx + 1), region: speechToken.slice(0, idx) };
   }
