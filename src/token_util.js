@@ -10,7 +10,7 @@ export async function getTokenOrRefresh() {
       const res = await axios.get('/api/get-speech-token');
       const { token, region } = res.data;
 
-      cookie.set('speech-token', region + ':' + token, {maxAge: 480, path: '/'});
+      cookie.set('speech-token', region + ':' + token, {maxAge: 540, path: '/'});
 
       console.log(token, region);
 
