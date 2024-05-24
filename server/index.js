@@ -19,6 +19,11 @@ const { RecursiveCharacterTextSplitter } = require("langchain/text_splitter");
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(pino);
+app.use(
+  express.static(path.join(__dirname, '../public'), {
+    maxAge: 1000 * 1800,
+  })
+)
 
 const _controllerMap = new Map();
 

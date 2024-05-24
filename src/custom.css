@@ -1,5 +1,6 @@
 .main-container {
   margin-top: 20px;
+  max-height: 128px;
 }
 
 .red-microphone {
@@ -36,7 +37,8 @@
 
 .output-display {
   background-color: #383b4b;
-  height: calc(100% - 20px);;
+  max-height: 128px;
+  overflow-y: auto;
 }
 
 .fas, .fa {
@@ -46,4 +48,15 @@
 .background {
   background-color: #272727;
   color: #747474;
+}
+
+.pic-container {
+  width: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.virtual-partner-jpg {
+  height: 520px;
+  margin-top: 20px;
 }

@@ -11,6 +11,7 @@ import clsx from 'clsx';
 var _player = undefined;
 var _synthesizer = undefined;
 var _conversationArr = [];
+var _timefly = 0;
 
 const _speechContext = {
   running: false,
@@ -28,14 +29,21 @@ async function genSpeechConfig() {
 }
 
 export default function App() {
-  const [displayText, setDisplayText] = useState('👈 INITIALIZED: 👈 click the microphone button on the left');
+  const [displayText, setDisplayText] = useState('👈 INITIALIZED: 👈 click the microphone button on the left to begin.');
   const [recognizer, setRecognizer] = useState(null);
   const [microphone, setMicrophone] = useState(false);
+  const [virtualPartner, updateVirtualPartner] = useState('jpg');
 
   useEffect(() => {
     if (_socket.listeners('message')?.length > 0) {
       return;
     }
+
+    setInterval(() => {
+      if (Date.now() - _timefly >= 1000) {
+        updateVirtualPartner('jpg');
+      }
+    }, 400);
 
     _socket.on('message', (eventData) => {
       console.log(eventData);
@@ -172,6 +180,16 @@ export default function App() {
     });
   }
 
+  function audioStart () {
+    _player.internalAudio.addEventListener('timeupdate', () => {
+      if (Date.now() - _timefly > 1000) {
+        updateVirtualPartner('gif');
+      }
+      _timefly = Date.now();
+    });
+    updateVirtualPartner('gif');
+  }
+
   async function sttFromMic() {
     if (!microphone) {
       setMicrophone(true);
@@ -227,8 +245,10 @@ export default function App() {
 
                 player.pause();
                 player.close(async () => {
+                  updateVirtualPartner('jpg');
                   const speechConfig = await genSpeechConfig();
                   _player = new speechsdk.SpeakerAudioDestination();
+                  _player.onAudioStart = audioStart;
                   const audioConfig = speechsdk.AudioConfig.fromSpeakerOutput(_player);
                   _synthesizer = new speechsdk.SpeechSynthesizer(speechConfig, audioConfig);
                 }, err => {
@@ -245,17 +265,20 @@ export default function App() {
 
   return (
     <Container className="app-container">
-        <div className="row main-container">
-            <div className="col-6">
-                <i className={clsx('fa fa-microphone fa-2x mr-2', {
-                  'red-microphone': !microphone,
-                  'green-microphone': microphone,
-                })} onClick={() => sttFromMic()}></i>
-            </div>
-            <div className="col-6 output-display rounded">
-                <code>{displayText}</code>
-            </div>
+      <div className="row main-container">
+        <div className="col-6">
+          <i className={clsx('fa fa-microphone fa-2x mr-2', {
+            'red-microphone': !microphone,
+            'green-microphone': microphone,
+          })} onClick={() => sttFromMic()}></i>
         </div>
+        <div className="col-6 output-display rounded">
+          <code>{displayText}</code>
+        </div>
+      </div>
+      <div className="pic-container">
+        <img className="virtual-partner-jpg" src={ virtualPartner === 'jpg' ? "/virtual_partner_0.jpg" : "/virtual_partner_0.gif" } alt="" />
+      </div>
     </Container>
   );
 }
