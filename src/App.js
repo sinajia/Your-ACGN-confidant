@@ -269,7 +269,7 @@ export default function App() {
         <div className="col-6">
           <i className={clsx('fa fa-microphone fa-2x mr-2', {
             'red-microphone': !microphone,
-            'green-microphone': microphone,
+            'blue-microphone': microphone,
           })} onClick={() => sttFromMic()}></i>
         </div>
         <div className="col-6 output-display rounded">
