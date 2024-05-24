@@ -43,7 +43,7 @@ export default function App() {
       if (Date.now() - _timefly >= 1000) {
         updateVirtualPartner('jpg');
       }
-    }, 400);
+    }, 200);
 
     _socket.on('message', (eventData) => {
       console.log(eventData);
@@ -182,11 +182,9 @@ export default function App() {
 
   function audioStart () {
     _player.internalAudio.addEventListener('timeupdate', () => {
-      if (Date.now() - _timefly > 1000) {
-        updateVirtualPartner('gif');
-      }
       _timefly = Date.now();
     });
+    _timefly = Date.now();
     updateVirtualPartner('gif');
   }
 
