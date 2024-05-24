@@ -4,7 +4,7 @@
 
 Chat in real time with virtual characters
 
-<video src="./public/demo.mp4" width="100" controls preload></video>
+<video src="https://github.com/sinajia/Your-ACGN-confidant/assets/7146748/1151ef88-f02f-4e2c-be95-fa325cac3a93" width="100" controls preload></video>
 
 ## Prepare environment
 
