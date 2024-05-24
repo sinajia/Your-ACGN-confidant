@@ -1,0 +1,8 @@
+# Azure / AI Services / Speech Service
+SPEECH_KEY=
+SPEECH_REGION=
+
+OPENAI_API_KEY=
+
+# AlibabaTongyi
+# ALIBABA_API_KEY=

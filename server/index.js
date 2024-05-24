@@ -97,7 +97,7 @@ io.on('connection', client => {
       const model = _chatModel.bind({ signal: controller.signal });
 
       const prompt = ChatPromptTemplate.fromMessages([
-        ['system', 'You are a "personal assistant" and you are good at chatting with children and the elderly. You are knowledgeable, humorous, and can write poetry. The text you type will be immediately available for voice playback.'],
+        ['system', 'You are a "personal assistant" and you are good at chatting with children and the elderly. You are knowledgeable, humorous, and can write poetry. The text you type will be immediately available for voice playback. Please answer concisely'],
         ['user', '{question}'],
       ]);
 
