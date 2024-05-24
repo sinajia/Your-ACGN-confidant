@@ -239,15 +239,15 @@ export default function App() {
   }
 
   return (
-      <Container className="app-container">
-          <div className="row main-container">
-              <div className="col-6">
-                  <i className="fas fa-microphone fa-lg mr-2" onClick={() => sttFromMic()}></i>
-              </div>
-              <div className="col-6 output-display rounded">
-                  <code>{displayText}</code>
-              </div>
-          </div>
-      </Container>
+    <Container className="app-container">
+        <div className="row main-container">
+            <div className="col-6">
+                <i className="fas fa-microphone fa-lg mr-2" onClick={() => sttFromMic()}></i>
+            </div>
+            <div className="col-6 output-display rounded">
+                <code>{displayText}</code>
+            </div>
+        </div>
+    </Container>
   );
 }

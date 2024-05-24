@@ -44,7 +44,7 @@ app.get('/api/get-speech-token', async (req, res) => {
   const speechRegion = process.env.SPEECH_REGION;
 
   if (!(speechKey && speechRegion)) {
-      res.status(400).send('You forgot to add your speech key or region to the .env file.');
+    res.status(400).send('You forgot to add your speech key or region to the .env file.');
   } else {
     const headers = {
       headers: {
