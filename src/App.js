@@ -219,8 +219,8 @@ export default function App() {
         try {
           const res = e.result;
           console.log(`recognized: ${res?.text}`);
-          setDisplayText(res?.text);
           if (res?.text) {
+            setDisplayText(res?.text);
             for (const it of _conversationArr) {
               _socket.emit('abort', { conversationId: it.conversationId });
             }
