@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@colors/colors':
+        specifier: ^1.6.0
+        version: 1.6.0
       '@langchain/community':
         specifier: ^0.2.1
         version: 0.2.1(@qdrant/js-client-rest@1.9.0(typescript@5.4.5))(axios@1.7.2)(ignore@5.3.1)(jsdom@16.7.0)(lodash@4.17.21)(openai@4.47.1)(ws@8.17.0)
@@ -841,6 +844,10 @@ packages:
 
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
+
+  '@colors/colors@1.6.0':
+    resolution: {integrity: sha512-Ir+AOibqzrIsL6ajt3Rz3LskB7OiMVHqltZmspbW/TJuTVuyOMirVqAkjfY6JISiLHgyNqicAC8AyHHGzNd/dA==}
+    engines: {node: '>=0.1.90'}
 
   '@csstools/normalize.css@12.1.1':
     resolution: {integrity: sha512-YAYeJ+Xqh7fUou1d1j9XHl44BmsuThiTr4iNrgCQ3J27IbhXsxXDGZ1cXv8Qvs99d4rBbLiSKy3+WZiet32PcQ==}
@@ -7429,6 +7436,8 @@ snapshots:
       to-fast-properties: 2.0.0
 
   '@bcoe/v8-coverage@0.2.3': {}
+
+  '@colors/colors@1.6.0': {}
 
   '@csstools/normalize.css@12.1.1': {}
 

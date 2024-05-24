@@ -121,7 +121,7 @@ export default function App() {
           }
           try {
             await pTimeout(speakWithSsml(sentence), {
-              milliseconds: 6500,
+              milliseconds: 10000,
             });
           } catch (err) {
             console.error(err.message);

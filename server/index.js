@@ -6,31 +6,38 @@ const pino = require('pino-http')();
 const { appendFileSync } = require('node:fs');
 const path = require('node:path');
 const { format } = require('date-fns');
+const colors = require('@colors/colors/safe');
 
+const { ChatOpenAI } = require("@langchain/openai");
 const { ChatAlibabaTongyi } = require("@langchain/community/chat_models/alibaba_tongyi");
 const { StringOutputParser } = require("@langchain/core/output_parsers");
 const { ChatPromptTemplate } = require("@langchain/core/prompts");
 const { RunnableSequence } = require("@langchain/core/runnables");
 const { CheerioWebBaseLoader } = require("@langchain/community/document_loaders/web/cheerio");
 const { RecursiveCharacterTextSplitter } = require("langchain/text_splitter");
-const {
-  SpeechConfig,
-  SpeechSynthesizer,
-  ResultReason,
-  ProfanityOption,
-} = require("microsoft-cognitiveservices-speech-sdk");
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(pino);
 
-const chatModel = new ChatAlibabaTongyi({
-  modelName: 'qwen-max',
-  temperature: 0.9,
-  alibabaApiKey: process.env.ALIBABA_API_KEY,
-});
-
 const controllerMap = new Map();
+
+if (process.env.OPENAI_API_KEY) {
+ var chatModel = new ChatOpenAI({
+    temperature: 0.9,
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+  console.log(colors.green('Openai available'));
+} else if (process.env.ALIBABA_API_KEY) {
+  chatModel = new ChatAlibabaTongyi({
+    modelName: 'qwen-max',
+    temperature: 0.9,
+    alibabaApiKey: process.env.ALIBABA_API_KEY,
+  });
+  console.log(colors.green('Tongyi available'));
+} else {
+  console.error(colors.red('None available LLM'));
+}
 
 app.get('/api/get-speech-token', async (req, res) => {
   const speechKey = process.env.SPEECH_KEY;
@@ -78,71 +85,84 @@ io.on('connection', client => {
       '；',
     ];
 
-    const controller = new AbortController();
-
-    controllerMap.set(conversationId, controller);
-
-    const model = chatModel.bind({ signal: controller.signal });
-
-    const prompt = ChatPromptTemplate.fromMessages([
-      ["system", "你的角色是“私人助理”，你擅长与小朋友交流，你博学多才、幽默风趣。"],
-      ["user", "{question}"],
-    ]);
-
-    const retrievalChain = RunnableSequence.from([
-      prompt,
-      model,
-      new StringOutputParser(),
-    ]);
-
     var index = 0;
-    var textArr = [];
-    const answer = [];
+    const fullReply = [];
 
-    try {
-      const streamAnswer = await retrievalChain.stream({
-        question: question.substring(0, 4096),
-      });
+    if (chatModel) {
+      const controller = new AbortController();
 
-      for await (const chunk of streamAnswer) {
-        answer.push(chunk);
-        const pos = markPosition(chunk, symbols);
-        if (pos === -1) {
-          textArr.push(chunk);
-        } else {
-          const sentence = textArr.join('');
-          if (sentence.length + chunk.substring(0, pos).length < 12) {
+      controllerMap.set(conversationId, controller);
+
+      const model = chatModel.bind({ signal: controller.signal });
+
+      const prompt = ChatPromptTemplate.fromMessages([
+        ["system", 'You are a "personal assistant" and you are good at chatting with children and the elderly. You are knowledgeable, humorous, and can write poetry. The text you type will be immediately available for voice playback.'],
+        ["user", "{question}"],
+      ]);
+
+      const retrievalChain = RunnableSequence.from([
+        prompt,
+        model,
+        new StringOutputParser(),
+      ]);
+
+      var textArr = [];
+
+      try {
+        const streamAnswer = await retrievalChain.stream({
+          question: question.substring(0, 4096),
+        });
+
+        for await (const chunk of streamAnswer) {
+          fullReply.push(chunk);
+          const pos = markPosition(chunk, symbols);
+          if (pos === -1) {
             textArr.push(chunk);
           } else {
-            textArr = [
-              chunk.substring(pos + 1),
-            ];
-            wsChatFragment({
-              client,
-              sentence: sentence + chunk.substring(0, pos + 1),
-              conversationId,
-              index: index++,
-            });
+            const sentence = textArr.join('');
+            if (sentence.length + chunk.substring(0, pos).length < 12) {
+              textArr.push(chunk);
+            } else {
+              textArr = [
+                chunk.substring(pos + 1),
+              ];
+              wsChatFragment({
+                client,
+                sentence: sentence + chunk.substring(0, pos + 1),
+                conversationId,
+                index: index++,
+              });
+            }
           }
         }
+      } catch (e) {
+        fullReply.push(e.message ?? '') || console.error(e.message);
       }
-    } catch (e) {
-      answer.push(e.message) || console.error(e.message);
+
+      controllerMap.delete(conversationId);
+
+      wsChatFragment({
+        client,
+        sentence: textArr.join(''),
+        conversationId,
+        index: index++,
+        last: true,
+      });
+    } else {
+      const sentence = 'None available LLM';
+      wsChatFragment({
+        client,
+        sentence,
+        conversationId,
+        index,
+        last: true,
+      });
+      fullReply.push(sentence);
     }
-
-    controllerMap.delete(conversationId);
-
-    wsChatFragment({
-      client,
-      sentence: textArr.join(''),
-      conversationId,
-      index: index++,
-      last: true,
-    });
 
     appendFileSync(path.join(__dirname, '..', 'history-info.log'), JSON.stringify({
       question,
-      answer: answer.join(''),
+      answer: fullReply.join(''),
       timestamp: format(new Date(), 'yy-MM-dd H:m:s'),
     }, null, ' ') + '\n', 'utf-8');
   }); // end client.on('message'
