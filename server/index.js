@@ -20,22 +20,23 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(pino);
 
-const controllerMap = new Map();
+const _controllerMap = new Map();
 
 if (process.env.OPENAI_API_KEY) {
- var chatModel = new ChatOpenAI({
+ var _chatModel = new ChatOpenAI({
     temperature: 0.9,
     apiKey: process.env.OPENAI_API_KEY,
   });
   console.log(colors.green('Openai available'));
 } else if (process.env.ALIBABA_API_KEY) {
-  chatModel = new ChatAlibabaTongyi({
+  _chatModel = new ChatAlibabaTongyi({
     modelName: 'qwen-max',
     temperature: 0.9,
     alibabaApiKey: process.env.ALIBABA_API_KEY,
   });
   console.log(colors.green('Tongyi available'));
 } else {
+  // todo if Ollama ...
   console.error(colors.red('None available LLM'));
 }
 
@@ -88,12 +89,12 @@ io.on('connection', client => {
     var index = 0;
     const fullReply = [];
 
-    if (chatModel) {
+    if (_chatModel) {
       const controller = new AbortController();
 
-      controllerMap.set(conversationId, controller);
+      _controllerMap.set(conversationId, controller);
 
-      const model = chatModel.bind({ signal: controller.signal });
+      const model = _chatModel.bind({ signal: controller.signal });
 
       const prompt = ChatPromptTemplate.fromMessages([
         ["system", 'You are a "personal assistant" and you are good at chatting with children and the elderly. You are knowledgeable, humorous, and can write poetry. The text you type will be immediately available for voice playback.'],
@@ -139,7 +140,7 @@ io.on('connection', client => {
         fullReply.push(e.message ?? '') || console.error(e.message);
       }
 
-      controllerMap.delete(conversationId);
+      _controllerMap.delete(conversationId);
 
       wsChatFragment({
         client,
@@ -171,9 +172,9 @@ io.on('connection', client => {
 
   client.on('abort', (data) => {
     const { conversationId } = data;
-    if (controllerMap.has(conversationId)) {
-      controllerMap.get(conversationId).abort();
-      controllerMap.delete(conversationId);
+    if (_controllerMap.has(conversationId)) {
+      _controllerMap.get(conversationId).abort();
+      _controllerMap.delete(conversationId);
     }
   });
 }); // end io.on('connection'
