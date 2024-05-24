@@ -97,8 +97,8 @@ io.on('connection', client => {
       const model = _chatModel.bind({ signal: controller.signal });
 
       const prompt = ChatPromptTemplate.fromMessages([
-        ["system", 'You are a "personal assistant" and you are good at chatting with children and the elderly. You are knowledgeable, humorous, and can write poetry. The text you type will be immediately available for voice playback.'],
-        ["user", "{question}"],
+        ['system', 'You are a "personal assistant" and you are good at chatting with children and the elderly. You are knowledgeable, humorous, and can write poetry. The text you type will be immediately available for voice playback.'],
+        ['user', '{question}'],
       ]);
 
       const retrievalChain = RunnableSequence.from([
@@ -129,7 +129,7 @@ io.on('connection', client => {
               ];
               wsChatFragment({
                 client,
-                sentence: sentence + chunk.substring(0, pos + 1),
+                sentence: eraseUnnecessary(sentence + chunk.substring(0, pos + 1)),
                 conversationId,
                 index: index++,
               });
@@ -144,7 +144,7 @@ io.on('connection', client => {
 
       wsChatFragment({
         client,
-        sentence: textArr.join(''),
+        sentence: eraseUnnecessary(textArr.join('')),
         conversationId,
         index: index++,
         last: true,
@@ -187,6 +187,13 @@ function markPosition (str, symbols) {
     }
   }
   return -1;
+}
+
+function eraseUnnecessary (str) {
+  if (!str) {
+    return '';
+  }
+  return str.replace(/#/g, '').replace(/\*/g, '');
 }
 
 function wsChatFragment({

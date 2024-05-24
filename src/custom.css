@@ -1,49 +1,49 @@
 .main-container {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
-.fa-microphone {
-    color: #14A76C;
+.red-microphone {
+  color: #d44916;
 }
 
-.fa-microphone:hover {
-    color: #0c6e47;
+.green-microphone {
+  color: #14A76C;
 }
 
 .fa-volume-up {
-    color: gold;
+  color: gold;
 }
 
 .fa-volume-up:hover {
-    color: darkgoldenrod;
+  color: darkgoldenrod;
 }
 
 .fa-volume-mute {
-    color: white;
+  color: white;
 }
 
 .fa-volume-mute:hover {
-    color: beige;
+  color: beige;
 }
 
 .fa-file-audio {
-    color: #FF652F;
+  color: #FF652F;
 }
 
 .fa-file-audio:hover {
-    color: #d44916;
+  color: #d44916;
 }
 
 .output-display {
-    background-color: #383b4b;
-    height: calc(100% - 20px);;
+  background-color: #383b4b;
+  height: calc(100% - 20px);;
 }
 
 .fas, .fa {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .background {
-    background-color: #272727;
-    color: #747474;
+  background-color: #272727;
+  color: #747474;
 }

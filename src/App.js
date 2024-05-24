@@ -6,6 +6,7 @@ import * as speechsdk from 'microsoft-cognitiveservices-speech-sdk';
 import { getTokenOrRefresh } from './token_util';
 import delay from 'delay';
 import pTimeout from 'p-timeout';
+import clsx from 'clsx';
 
 var _player = undefined;
 var _synthesizer = undefined;
@@ -27,8 +28,9 @@ async function genSpeechConfig() {
 }
 
 export default function App() {
-  const [displayText, setDisplayText] = useState('INITIALIZED: ready to test speech...');
+  const [displayText, setDisplayText] = useState('👈 INITIALIZED: 👈 click the microphone button on the left');
   const [recognizer, setRecognizer] = useState(null);
+  const [microphone, setMicrophone] = useState(false);
 
   useEffect(() => {
     if (_socket.listeners('message')?.length > 0) {
@@ -171,6 +173,9 @@ export default function App() {
   }
 
   async function sttFromMic() {
+    if (!microphone) {
+      setMicrophone(true);
+    }
     const speechConfig = await genSpeechConfig();
     if (!_player) {
       _player = new speechsdk.SpeakerAudioDestination();
@@ -242,7 +247,10 @@ export default function App() {
     <Container className="app-container">
         <div className="row main-container">
             <div className="col-6">
-                <i className="fas fa-microphone fa-lg mr-2" onClick={() => sttFromMic()}></i>
+                <i className={clsx('fa fa-microphone fa-2x mr-2', {
+                  'red-microphone': !microphone,
+                  'green-microphone': microphone,
+                })} onClick={() => sttFromMic()}></i>
             </div>
             <div className="col-6 output-display rounded">
                 <code>{displayText}</code>
