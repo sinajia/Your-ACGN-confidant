@@ -131,7 +131,7 @@ export default function App() {
         }
         try {
           await pTimeout(speakWithSsml(sentence), {
-            milliseconds: 8000, // 8s
+            milliseconds: 6000,
           });
         } catch (err) {
           console.error(err.message);
@@ -244,6 +244,7 @@ export default function App() {
               const player = _player;
               _player = undefined;
 
+              player.mute();
               player.pause();
               player.close(async () => {
                 updateVirtualPartner('jpg');
