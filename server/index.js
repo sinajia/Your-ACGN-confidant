@@ -142,7 +142,8 @@ io.on('connection', client => {
           }
         }
       } catch (e) {
-        fullReply.push(e.message ?? '') || console.error(e.message);
+        fullReply.push(e.message ?? '');
+        console.error(e.message);
       }
 
       _controllerMap.delete(conversationId);
