@@ -35,7 +35,7 @@ if (process.env.OPENAI_API_KEY) {
   console.log(colors.green('Openai available'));
 } else if (process.env.ALIBABA_API_KEY) {
   _chatModel = new ChatAlibabaTongyi({
-    modelName: 'qwen-max',
+    modelName: 'qwen-turbo',
     temperature: 0.9,
     alibabaApiKey: process.env.ALIBABA_API_KEY,
   });
@@ -66,6 +66,10 @@ app.get('/api/get-speech-token', async (req, res) => {
       res.status(401).send('There was an error authorizing your speech key.');
     }
   }
+});
+
+app.get('/api/get-lang', (req, res) => {
+  return res.send(process.env.LANG);
 });
 
 const server = require('http').createServer(app);

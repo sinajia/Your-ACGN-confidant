@@ -12,11 +12,21 @@ var _player = undefined;
 var _synthesizer = undefined;
 var _conversationArr = [];
 var _timefly = 0;
+var _langtype = 'zh';
+
+const _Lang = {
+  en: ['en-US-AmberNeural', `Let's chat in English`, 'en-US'],
+  zh: ['zh-CN-XiaoxiaoNeural', '我们一起聊天吧', 'zh-CN'],
+}
+
+var _displayTextArr = [
+];
 
 const _speechContext = {
   running: false,
   langArr: [],
 }
+
 const _socket = io();
 
 _socket.on('connect', () => {
@@ -26,6 +36,17 @@ _socket.on('connect', () => {
 async function genSpeechConfig() {
   const tokenObj = await getTokenOrRefresh();
   return speechsdk.SpeechConfig.fromAuthorizationToken(tokenObj.authToken, tokenObj.region);
+}
+
+function pushAndDisplayTextStr (line) {
+  const max = 28;
+  if (line) {
+    _displayTextArr.push(line);
+  }
+  if (_displayTextArr.length > max) {
+    _displayTextArr = _displayTextArr.slice(_displayTextArr.length - max);
+  }
+  return _displayTextArr.join('\n');
 }
 
 export default function App() {
@@ -143,10 +164,10 @@ export default function App() {
   }
 
   function speakWithSsml(sentence) {
-    setDisplayText(`speaking text: ${sentence}`);
+    setDisplayText(pushAndDisplayTextStr(sentence));
 
     const ssml = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="string">
-      <voice name="zh-CN-XiaoxiaoNeural">
+      <voice name="${_Lang[_langtype][0]}">
         <mstts:express-as  style="friendly">
           <prosody rate="0%" pitch="0%">
           ${sentence}
@@ -202,14 +223,20 @@ export default function App() {
       _synthesizer = new speechsdk.SpeechSynthesizer(speechConfig, audioConfig);
     }
     if (!recognizer) {
-      speechConfig.speechRecognitionLanguage = 'zh-CN'; // 'en-US';
+      const respond = await fetch('/api/get-lang');
+      if (respond.ok) {
+        _langtype = await respond.text();
+      }
+
+      speechConfig.speechRecognitionLanguage = _Lang[_langtype][2];
       const audioConfig = speechsdk.AudioConfig.fromDefaultMicrophoneInput();
       const recognizer = new speechsdk.SpeechRecognizer(speechConfig, audioConfig);
       setRecognizer(recognizer);
       setDisplayText('speak into your microphone...');
+      await delay(100);
       recognizer.startContinuousRecognitionAsync(result => {
         console.log('result', result);
-        _speechContext.langArr.push('我们来聊天吧!');
+        _speechContext.langArr.push(_Lang[_langtype][1]);
         langArrToSpeech();
       }, err => {
         console.error('error', err);
@@ -220,7 +247,7 @@ export default function App() {
           const res = e.result;
           console.log(`recognized: ${res?.text}`);
           if (res?.text) {
-            setDisplayText(res?.text);
+            setDisplayText(pushAndDisplayTextStr(res?.text));
             for (const it of _conversationArr) {
               _socket.emit('abort', { conversationId: it.conversationId });
             }
@@ -267,19 +294,19 @@ export default function App() {
 
   return (
     <Container className="app-container">
+      <div style={{marginTop: '20px'}}>
+        <i className={clsx('fa fa-microphone fa-2x mr-2', {
+          'red-microphone': !microphone,
+          'blue-microphone': microphone,
+        })} onClick={() => sttFromMic()}></i>
+      </div>
       <div className="row main-container">
         <div className="col-6">
-          <i className={clsx('fa fa-microphone fa-2x mr-2', {
-            'red-microphone': !microphone,
-            'blue-microphone': microphone,
-          })} onClick={() => sttFromMic()}></i>
+          <img className="virtual-partner-jpg" src={ virtualPartner === 'jpg' ? "/virtual_partner_0.jpg" : "/virtual_partner_0.gif" } alt="" />
         </div>
         <div className="col-6 output-display rounded">
-          <code>{displayText}</code>
+          <code><pre>{displayText}</pre></code>
         </div>
-      </div>
-      <div className="pic-container">
-        <img className="virtual-partner-jpg" src={ virtualPartner === 'jpg' ? "/virtual_partner_0.jpg" : "/virtual_partner_0.gif" } alt="" />
       </div>
     </Container>
   );
