@@ -225,7 +225,10 @@ export default function App() {
     if (!recognizer) {
       const respond = await fetch('/api/get-lang');
       if (respond.ok) {
-        _langtype = await respond.text();
+        const lan = await respond.text();
+        if (lan) {
+          _langtype = lan;
+        }
       }
 
       speechConfig.speechRecognitionLanguage = _Lang[_langtype][2];
