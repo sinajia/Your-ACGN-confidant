@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@colors/colors": "^1.6.0",
-    "@langchain/community": "^0.2.1",
-    "@langchain/core": "^0.2.0",
+    "@langchain/community": "^0.2.4",
+    "@langchain/core": "^0.2.3",
     "@langchain/openai": "^0.0.33",
     "@langchain/qdrant": "^0.0.4",
     "@qdrant/js-client-rest": "^1.9.0",
@@ -25,7 +25,7 @@
     "delay": "^6.0.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "langchain": "^0.2.0",
+    "langchain": "^0.2.3",
     "lodash": "^4.17.21",
     "microsoft-cognitiveservices-speech-sdk": "^1.36.0",
     "npm-run-all": "^4.1.5",
@@ -39,7 +39,7 @@
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
     "universal-cookie": "^7.1.4",
-    "web-vitals": "^4.0.0"
+    "web-vitals": "^4.0.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.5",
