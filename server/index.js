@@ -69,7 +69,7 @@ app.get('/api/get-speech-token', async (req, res) => {
 });
 
 app.get('/api/get-lang', (req, res) => {
-  return res.send(process.env.LANG);
+  return res.send(process.env.SPEAKLANG);
 });
 
 const server = require('http').createServer(app);

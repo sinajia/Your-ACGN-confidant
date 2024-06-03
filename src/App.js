@@ -1,4 +1,5 @@
 import './custom.css'
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { Container } from 'reactstrap';
 import { io } from 'socket.io-client';
@@ -223,13 +224,8 @@ export default function App() {
       _synthesizer = new speechsdk.SpeechSynthesizer(speechConfig, audioConfig);
     }
     if (!recognizer) {
-      const respond = await fetch('/api/get-lang');
-      if (respond.ok) {
-        const lan = await respond.text();
-        if (lan) {
-          _langtype = lan;
-        }
-      }
+      const respond = await axios.get('/api/get-lang');
+      _langtype = respond.data;
 
       speechConfig.speechRecognitionLanguage = _Lang[_langtype][2];
       const audioConfig = speechsdk.AudioConfig.fromDefaultMicrophoneInput();

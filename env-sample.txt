@@ -8,4 +8,4 @@ OPENAI_API_KEY=
 # ALIBABA_API_KEY=
 
 # en or zh
-LANG=en
+SPEAKLANG=en
