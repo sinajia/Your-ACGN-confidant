@@ -11,7 +11,7 @@ Chat in real time with virtual characters
 ## Prepare environment
 
 - "node": ">=18"
-- "pnpm": ">=8"
+- "pnpm": "==9.1.4"
 - Azure speech Service key && (OpenAi key || AlibabaTongyi key)
 
 ## Start up
