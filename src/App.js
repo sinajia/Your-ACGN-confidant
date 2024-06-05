@@ -40,7 +40,7 @@ async function genSpeechConfig() {
 }
 
 function pushAndDisplayTextStr (line) {
-  const max = 28;
+  const max = 50;
   if (line) {
     _displayTextArr.push(line);
   }
